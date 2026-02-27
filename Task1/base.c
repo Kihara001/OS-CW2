@@ -89,6 +89,7 @@
 #include <linux/fs_struct.h>
 #include <linux/slab.h>
 #include <linux/sched/autogroup.h>
+#include <linux/atomic.h>
 #include <linux/sched/mm.h>
 #include <linux/sched/coredump.h>
 #include <linux/sched/debug.h>
@@ -1865,6 +1866,27 @@ out:
 	return error;
 }
 
+/*
+ * Memory operations ledger
+ */
+static int proc_pid_mem_ops(struct seq_file *m, struct pid_namespace *ns,
+                            struct pid *pid, struct task_struct *task)
+{
+    seq_printf(m, "mmap %ld %ld\n",
+               atomic_long_read(&task->mmap_count),
+               atomic_long_read(&task->mmap_bytes));
+    seq_printf(m, "munmap %ld %ld\n",
+               atomic_long_read(&task->munmap_count),
+               atomic_long_read(&task->munmap_bytes));
+    seq_printf(m, "mprotect %ld %ld\n",
+               atomic_long_read(&task->mprotect_count),
+               atomic_long_read(&task->mprotect_bytes));
+    seq_printf(m, "brk %ld %ld\n",
+               atomic_long_read(&task->brk_count),
+               atomic_long_read(&task->brk_bytes));
+    return 0;
+}
+
 const struct inode_operations proc_pid_link_inode_operations = {
 	.readlink	= proc_pid_readlink,
 	.get_link	= proc_pid_get_link,
@@ -3339,6 +3361,7 @@ static const struct pid_entry tgid_base_stuff[] = {
 	REG("cmdline",    S_IRUGO, proc_pid_cmdline_ops),
 	ONE("stat",       S_IRUGO, proc_tgid_stat),
 	ONE("statm",      S_IRUGO, proc_pid_statm),
+	ONE("mem_ops",    S_IRUGO, proc_pid_mem_ops),
 	REG("maps",       S_IRUGO, proc_pid_maps_operations),
 #ifdef CONFIG_NUMA
 	REG("numa_maps",  S_IRUGO, proc_pid_numa_maps_operations),

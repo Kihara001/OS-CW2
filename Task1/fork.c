@@ -41,6 +41,7 @@
 #include <linux/kmsan.h>
 #include <linux/binfmts.h>
 #include <linux/mman.h>
+#include <linux/atomic.h>
 #include <linux/mmu_notifier.h>
 #include <linux/fs.h>
 #include <linux/mm.h>
@@ -1201,6 +1202,15 @@ static struct task_struct *dup_task_struct(struct task_struct *orig, int node)
 	tsk->mm_cid_active = 0;
 	tsk->migrate_from_cpu = -1;
 #endif
+
+	atomic_long_set(&tsk->mmap_count, 0);
+	atomic_long_set(&tsk->mmap_bytes, 0);
+	atomic_long_set(&tsk->munmap_count, 0);
+	atomic_long_set(&tsk->munmap_bytes, 0);
+	atomic_long_set(&tsk->mprotect_count, 0);
+	atomic_long_set(&tsk->mprotect_bytes, 0);
+	atomic_long_set(&tsk->brk_count, 0);
+	atomic_long_set(&tsk->brk_bytes, 0);
 	return tsk;
 
 free_stack:

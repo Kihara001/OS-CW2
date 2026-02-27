@@ -23,6 +23,7 @@
 #include <linux/init.h>
 #include <linux/file.h>
 #include <linux/fs.h>
+#include <linux/atomic.h>
 #include <linux/personality.h>
 #include <linux/security.h>
 #include <linux/hugetlb.h>
@@ -208,6 +209,14 @@ success_unlocked:
 	userfaultfd_unmap_complete(mm, &uf);
 	if (populate)
 		mm_populate(oldbrk, newbrk - oldbrk);
+
+		if (mm->brk != origbrk) {
+			unsigned long diff = (mm->brk > origbrk) ? 
+								(mm->brk - origbrk) : 
+								(origbrk - mm->brk);
+			atomic_long_inc(&current->brk_count);
+			atomic_long_add(diff, &current->brk_bytes);
+    	}
 	return brk;
 
 out:
@@ -1775,6 +1784,8 @@ out:
 	if (populate)
 		mm_populate(ret, populate);
 	if (!IS_ERR_VALUE(ret))
+	    atomic_long_inc(&current->mmap_count);
+    	atomic_long_add(size, &current->mmap_bytes);
 		ret = 0;
 	return ret;
 }

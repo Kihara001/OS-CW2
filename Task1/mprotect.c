@@ -850,6 +850,11 @@ static int do_mprotect_pkey(unsigned long start, size_t len,
 
 out:
 	mmap_write_unlock(current->mm);
+
+	if (error == 0) {
+        atomic_long_inc(&current->mprotect_count);
+        atomic_long_add(len, &current->mprotect_bytes);
+    }
 	return error;
 }
 

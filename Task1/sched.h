@@ -31,6 +31,7 @@
 #include <linux/refcount_types.h>
 #include <linux/resource.h>
 #include <linux/latencytop.h>
+#include <linux/atomic.h>
 #include <linux/sched/prio.h>
 #include <linux/sched/types.h>
 #include <linux/signal_types.h>
@@ -1605,6 +1606,15 @@ struct task_struct {
 	 * they are included in the randomized portion of task_struct.
 	 */
 	randomized_struct_fields_end
+
+	atomic_long_t mmap_count;      // mmap呼び出し回数
+	atomic_long_t mmap_bytes;      // mmapの合計バイト数
+	atomic_long_t munmap_count;    // munmap呼び出し回数
+	atomic_long_t munmap_bytes;    // munmapの合計バイト数
+	atomic_long_t mprotect_count;  // mprotect呼び出し回数
+	atomic_long_t mprotect_bytes;  // mprotectの合計バイト数
+	atomic_long_t brk_count;       // brk呼び出し回数
+	atomic_long_t brk_bytes;       // brkの合計変化量（絶対値）
 
 	/* CPU-specific state of this task: */
 	struct thread_struct		thread;
