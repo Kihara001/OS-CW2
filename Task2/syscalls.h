@@ -966,6 +966,12 @@ asmlinkage long sys_cachestat(unsigned int fd,
 		struct cachestat_range __user *cstat_range,
 		struct cachestat __user *cstat, unsigned int flags);
 asmlinkage long sys_map_shadow_stack(unsigned long addr, unsigned long size, unsigned int flags);
+
+/* ↓↓↓ ここに追加 ↓↓↓ */
+asmlinkage long sys_va_space_stat(pid_t pid,
+                struct addr_space_info __user *info);
+/* ↑↑↑ ここまで ↑↑↑ */
+
 asmlinkage long sys_lsm_get_self_attr(unsigned int attr, struct lsm_ctx __user *ctx,
 				      u32 __user *size, u32 flags);
 asmlinkage long sys_lsm_set_self_attr(unsigned int attr, struct lsm_ctx __user *ctx,
@@ -1303,4 +1309,6 @@ int __sys_getsockopt(int fd, int level, int optname, char __user *optval,
 		int __user *optlen);
 int __sys_setsockopt(int fd, int level, int optname, char __user *optval,
 		int optlen);
+
+
 #endif

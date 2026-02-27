@@ -1,0 +1,1 @@
+obj-y += va_space_stat.o
