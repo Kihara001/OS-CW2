@@ -207,7 +207,7 @@ success:
 	mmap_write_unlock(mm);
 success_unlocked:
 	userfaultfd_unmap_complete(mm, &uf);
-	if (populate)
+	if (populate) {
 		mm_populate(oldbrk, newbrk - oldbrk);
 
 		if (mm->brk != origbrk) {
@@ -217,6 +217,7 @@ success_unlocked:
 			atomic_long_inc(&current->brk_count);
 			atomic_long_add(diff, &current->brk_bytes);
     	}
+	}
 	return brk;
 
 out:
