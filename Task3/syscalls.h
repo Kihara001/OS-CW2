@@ -329,7 +329,6 @@ asmlinkage long sys_io_pgetevents_time32(aio_context_t ctx_id,
 				struct io_event __user *events,
 				struct old_timespec32 __user *timeout,
 				const struct __aio_sigset __user *sig);
-asmlinkage long sys_cow_info(pid_t pid, struct cow_info __user *info);
 asmlinkage long sys_io_uring_setup(u32 entries,
 				struct io_uring_params __user *p);
 asmlinkage long sys_io_uring_enter(unsigned int fd, u32 to_submit,
@@ -967,6 +966,12 @@ asmlinkage long sys_cachestat(unsigned int fd,
 		struct cachestat_range __user *cstat_range,
 		struct cachestat __user *cstat, unsigned int flags);
 asmlinkage long sys_map_shadow_stack(unsigned long addr, unsigned long size, unsigned int flags);
+
+/* ↓↓↓ ここに追加 ↓↓↓ */
+asmlinkage long sys_va_space_stat(pid_t pid,
+                struct addr_space_info __user *info);
+/* ↑↑↑ ここまで ↑↑↑ */
+
 asmlinkage long sys_lsm_get_self_attr(unsigned int attr, struct lsm_ctx __user *ctx,
 				      u32 __user *size, u32 flags);
 asmlinkage long sys_lsm_set_self_attr(unsigned int attr, struct lsm_ctx __user *ctx,
@@ -1176,7 +1181,7 @@ asmlinkage long sys_olduname(struct oldold_utsname __user *);
 #ifdef __ARCH_WANT_SYS_OLD_GETRLIMIT
 asmlinkage long sys_old_getrlimit(unsigned int resource, struct rlimit __user *rlim);
 #endif
-
+asmlinkage long sys_cow_info(pid_t pid, struct cow_info __user *info);
 /* obsolete */
 asmlinkage long sys_ipc(unsigned int call, int first, unsigned long second,
 		unsigned long third, void __user *ptr, long fifth);
@@ -1304,4 +1309,6 @@ int __sys_getsockopt(int fd, int level, int optname, char __user *optval,
 		int __user *optlen);
 int __sys_setsockopt(int fd, int level, int optname, char __user *optval,
 		int optlen);
+
+
 #endif
