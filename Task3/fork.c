@@ -1202,7 +1202,7 @@ static struct task_struct *dup_task_struct(struct task_struct *orig, int node)
 	tsk->mm_cid_active = 0;
 	tsk->migrate_from_cpu = -1;
 #endif
-	atomic_long_set(&p->cow_fault_count, 0);
+	atomic_long_set(&tsk->cow_fault_count, 0);
 	return tsk;
 
 free_stack:
