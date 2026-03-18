@@ -708,7 +708,8 @@ fail:
  */
 static int do_mprotect_pkey(unsigned long start, size_t len,
 		unsigned long prot, int pkey)
-{
+{	
+	size_t original_len = len;  // ← 追加
 	unsigned long nstart, end, tmp, reqprot;
 	struct vm_area_struct *vma, *prev;
 	int error;
@@ -853,7 +854,7 @@ out:
 
 	if (error == 0) {
         atomic_long_inc(&current->mprotect_count);
-        atomic_long_add(len, &current->mprotect_bytes);
+        atomic_long_add(original_len, &current->mprotect_bytes);
     }
 	return error;
 }
